@@ -4,6 +4,7 @@ package tobyspring.helloboot;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -18,17 +19,22 @@ public class HellobootApplication {
 	public static void main(String[] args) {
 		TomcatServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
 		WebServer webServer = serverFactory.getWebServer(servletContext -> {
-			servletContext.addServlet("hello", new HttpServlet() {
+			servletContext.addServlet("frontcontroller", new HttpServlet() {
 				@Override
 				protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-					String name = req.getParameter("name");
-//					resp.setStatus(200);
-//					resp.setHeader("Content-Type", "text/plain");
-					resp.setStatus(HttpStatus.OK.value());
-					resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-					resp.getWriter().println("Hello Servlet: " + name);
+					// 인증, 보안, 다국어 등 공통 기능을 처리함
+					if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
+						String name = req.getParameter("name");
+						resp.setStatus(HttpStatus.OK.value());
+						resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+						resp.getWriter().println("Hello Servlet: " + name);
+					} else if (req.getRequestURI().equals("/user")) {
+
+					} else {
+						resp.setStatus(HttpStatus.NOT_FOUND.value());
+					}
 				}
-			}).addMapping("/hello");	// /hello 로 들어오는게 해당 서블릿에서 처리한다.
+			}).addMapping("/*");	// 모든 요청을 다 처리한다.
 		});
 		webServer.start();
 
