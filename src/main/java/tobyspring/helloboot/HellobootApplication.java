@@ -22,6 +22,7 @@ public class HellobootApplication {
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
 		// 클래스 정보만 넘긴다.
 		applicationContext.registerBean(HelloController.class);
+		applicationContext.registerBean(SimpleHelloService.class);
 		// 가지고 있는 구성정보로 컨테이너를 초기화하기 위해서 refresh 호출
 		applicationContext.refresh();
 
